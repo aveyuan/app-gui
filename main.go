@@ -75,7 +75,8 @@ func Lamda(v string)func()  {
 }
 
 func init()  {
-	var conf string = "config.ini"
+	pwd,_ := os.Getwd()
+	var conf string = pwd + "/config.ini"
 	if len(os.Args)>=2 {
 		conf = os.Args[1]
 	}
