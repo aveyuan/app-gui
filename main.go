@@ -6,8 +6,10 @@ import (
 	"fyne.io/fyne/app"
 	"fyne.io/fyne/widget"
 	"github.com/go-ini/ini"
+	"log"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"sort"
 )
 
@@ -75,7 +77,10 @@ func Lamda(v string)func()  {
 }
 
 func init()  {
-	pwd,_ := os.Getwd()
+	pwd, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	if err != nil {
+		log.Fatal(err)
+	}
 	var conf string = pwd + "/config.ini"
 	if len(os.Args)>=2 {
 		conf = os.Args[1]
