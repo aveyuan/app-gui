@@ -2,25 +2,26 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"os"
+	"os/exec"
+	"sort"
+
 	"fyne.io/fyne"
 	"fyne.io/fyne/app"
 	"fyne.io/fyne/widget"
 	"github.com/go-ini/ini"
-	"log"
-	"os"
-	"os/exec"
-	"path/filepath"
-	"sort"
 )
 
 var cfg *ini.File
 var err error
 
 func main() {
+	_ = os.Setenv("FYNE_FONT", "./miniHei.ttf")
 	app := app.New()
 	w := app.NewWindow("App")
 	w.SetContent(widget.NewVBox(
-		Mbox()...
+		Mbox()...,
 	),
 	)
 	titile := cfg.Section("").Key("titile").String()
@@ -28,25 +29,25 @@ func main() {
 	w.ShowAndRun()
 }
 
-func Mbox()[]fyne.CanvasObject {
+func Mbox() []fyne.CanvasObject {
 	var box []fyne.CanvasObject
 	names := cfg.SectionStrings()
-	for _,v := range names {
-		if v == "DEFAULT"{
+	for _, v := range names {
+		if v == "DEFAULT" {
 			continue
 		}
-		lab := append(box,ALab(v))
-		box = append(lab,ABox(v))
+		lab := append(box, ALab(v))
+		box = append(lab, ABox(v))
 	}
 	return box
 }
 
-func ABox(name string)*widget.Box  {
+func ABox(name string) *widget.Box {
 	var bt []fyne.CanvasObject
 	maphash := cfg.Section(name).KeysHash()
-	funcs := make(map[string]func(),0)
-	for k,v := range maphash {
-		funcs[k]=Lamda(v)
+	funcs := make(map[string]func(), 0)
+	for k, v := range maphash {
+		funcs[k] = Lamda(v)
 	}
 	//再拿出来排序
 	keys := make([]string, len(funcs))
@@ -57,32 +58,32 @@ func ABox(name string)*widget.Box  {
 	}
 	sort.Strings(keys)
 
-	for _, v := range keys{
-		bt = append(bt,widget.NewButton(v, funcs[v]))
+	for _, v := range keys {
+		bt = append(bt, widget.NewButton(v, funcs[v]))
 	}
 
 	return widget.NewHBox(bt...)
 
 }
 
-func ALab(name string)*widget.Label  {
+func ALab(name string) *widget.Label {
 	return widget.NewLabel(name)
 }
 
-func Lamda(v string)func()  {
+func Lamda(v string) func() {
 	return func() {
 		cmd := exec.Command("/bin/bash", "-c", v)
 		cmd.Start()
 	}
 }
 
-func init()  {
-	pwd, err := filepath.Abs(filepath.Dir(os.Args[0]))
+func init() {
+	pwd, err := os.Getwd()
 	if err != nil {
 		log.Fatal(err)
 	}
 	var conf string = pwd + "/config.ini"
-	if len(os.Args)>=2 {
+	if len(os.Args) >= 2 {
 		conf = os.Args[1]
 	}
 	cfg, err = ini.Load(conf)
