@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
@@ -20,6 +21,15 @@ func main() {
 	_ = os.Setenv("FYNE_FONT", "./miniHei.ttf")
 	app := app.New()
 	w := app.NewWindow("App")
+	f, err := os.Open("./icon.png")
+	bit, _ := ioutil.ReadAll(f)
+	if err == nil {
+		w.SetIcon(&fyne.StaticResource{
+			StaticName: "ico,ico",
+			StaticContent:bit ,
+		})
+	}
+
 	w.SetContent(widget.NewVBox(
 		Mbox()...,
 	),
