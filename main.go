@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"sort"
 
 	"fyne.io/fyne"
@@ -15,13 +16,14 @@ import (
 )
 
 var cfg *ini.File
+var path string
 var err error
 
 func main() {
-	_ = os.Setenv("FYNE_FONT", "./miniHei.ttf")
+	_ = os.Setenv("FYNE_FONT", path + "/miniHei.ttf")
 	app := app.New()
 	w := app.NewWindow("App")
-	f, err := os.Open("./icon.png")
+	f, err := os.Open(path + "/icon.png")
 	bit, _ := ioutil.ReadAll(f)
 	if err == nil {
 		w.SetIcon(&fyne.StaticResource{
@@ -88,14 +90,11 @@ func Lamda(v string) func() {
 }
 
 func init() {
-	pwd, err := os.Getwd()
+	path, err = filepath.Abs(filepath.Dir(os.Args[0]))
 	if err != nil {
 		log.Fatal(err)
 	}
-	var conf string = pwd + "/config.ini"
-	if len(os.Args) >= 2 {
-		conf = os.Args[1]
-	}
+	var conf string = path + "/config.ini"
 	cfg, err = ini.Load(conf)
 	if err != nil {
 		fmt.Printf("Fail to read file: %v", err)
