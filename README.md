@@ -26,5 +26,4 @@ github=xdg-open http://www.github.com
 - baidu为具体配置内容后面跟需要执行的命令
 
 
-### 已知问题
-- 配置的按钮为中文会乱码（暂时使用英文吧）
+
