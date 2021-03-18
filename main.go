@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"sort"
 
 	"fyne.io/fyne"
@@ -20,15 +21,15 @@ var path string
 var err error
 
 func main() {
-	_ = os.Setenv("FYNE_FONT", path + "/miniHei.ttf")
+	_ = os.Setenv("FYNE_FONT", path+"/miniHei.ttf")
 	app := app.New()
 	w := app.NewWindow("App")
 	f, err := os.Open(path + "/icon.png")
 	bit, _ := ioutil.ReadAll(f)
 	if err == nil {
 		w.SetIcon(&fyne.StaticResource{
-			StaticName: "ico,ico",
-			StaticContent:bit ,
+			StaticName:    "ico,ico",
+			StaticContent: bit,
 		})
 	}
 
@@ -84,8 +85,13 @@ func ALab(name string) *widget.Label {
 
 func Lamda(v string) func() {
 	return func() {
-		cmd := exec.Command("/bin/bash", "-c", v)
-		cmd.Start()
+		if runtime.GOOS == "linux" {
+			cmd := exec.Command("/bin/bash", "-c", v)
+			cmd.Start()
+		} else {
+			c := exec.Command("cmd", "/C", v)
+			c.Run()
+		}
 	}
 }
 
