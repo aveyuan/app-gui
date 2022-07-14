@@ -8,7 +8,6 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
-	"sort"
 
 	"fyne.io/fyne"
 	"fyne.io/fyne/app"
@@ -57,22 +56,11 @@ func Mbox() []fyne.CanvasObject {
 
 func ABox(name string) *widget.Box {
 	var bt []fyne.CanvasObject
-	maphash := cfg.Section(name).KeysHash()
-	funcs := make(map[string]func(), 0)
-	for k, v := range maphash {
-		funcs[k] = Lamda(v)
-	}
-	//再拿出来排序
-	keys := make([]string, len(funcs))
-	i := 0
-	for k, _ := range funcs {
-		keys[i] = k
-		i++
-	}
-	sort.Strings(keys)
-
-	for _, v := range keys {
-		bt = append(bt, widget.NewButton(v, funcs[v]))
+	keys2 := cfg.Section(name).KeyStrings()
+	// 根据key拿出value
+	for _, k := range keys2 {
+		v := cfg.Section(name).Key(k).String()
+		bt = append(bt, widget.NewButton(k, Lamda(v)))
 	}
 
 	return widget.NewHBox(bt...)
@@ -89,7 +77,7 @@ func Lamda(v string) func() {
 			cmd := exec.Command("/bin/bash", "-c", v)
 			cmd.Start()
 		} else {
-			c := exec.Command("cmd", "/C", v)
+			c := exec.Command("bash", "-c", v)
 			c.Run()
 		}
 	}

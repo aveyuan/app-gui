@@ -25,5 +25,16 @@ github=xdg-open http://www.github.com
 - [web]为一个菜单
 - baidu为具体配置内容后面跟需要执行的命令
 
+## windows 使用说明
+>在windows下做了一些适配，最终发现还是使用bash来的快，这需要使用到git(bash)里面的能力来执行app-gui.exe，即可获得与linux一样的爽快
+
+```
+titile=快速启动工具
+[web]
+百度=“C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe” https://www.baidu.com
+github=“C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe” http://www.github.com``
+
+```
+
 
 
